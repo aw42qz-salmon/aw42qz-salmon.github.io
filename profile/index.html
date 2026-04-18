@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>프로필 페이지</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+        body, html {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+            font-family: 'Inter', sans-serif;
+            background-color: #000;
+        }
+
+        /* 배경 wrapper (sea.png) */
+        .background-wrapper {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('sea.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            z-index: 1;
+        }
+
+        /* 2등분 중 위쪽 영역 (별이 위치할 곳) */
+        .top-half {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 2;
+        }
+
+        /* 2등분 중 아래쪽 영역 */
+        .bottom-half {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 50%;
+            z-index: 2;
+        }
+
+        /* 하얀색 점 (별 역할) */
+        .star {
+            position: absolute;
+            background-color: #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 0 12px 3px rgba(255, 255, 255, 0.8);
+            animation: twinkle 3s infinite ease-in-out alternate;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
+        }
+
+        .star:hover {
+            transform: scale(4);
+            box-shadow: 0 0 20px 8px rgba(255, 255, 255, 1);
+            animation-play-state: paused;
+            z-index: 10;
+        }
+
+
+        /* 별 반짝임 애니메이션 */
+        @keyframes twinkle {
+            0% { opacity: 0.3; }
+            100% { opacity: 1; }
+        }
+
+        /* 5개의 하얀색 점(별) 위치 지정 (위쪽 50% 영역 내, 기존 2배 크기) */
+        .star:nth-child(1) { top: 20%; left: 15%; width: 12px; height: 12px; animation-delay: 0.1s; }
+        .star:nth-child(2) { top: 40%; left: 35%; width: 8px; height: 8px; animation-delay: 1.2s; }
+        .star:nth-child(3) { top: 15%; left: 65%; width: 14px; height: 14px; animation-delay: 0.5s; }
+        .star:nth-child(4) { top: 50%; left: 82%; width: 10px; height: 10px; animation-delay: 2.0s; }
+        .star:nth-child(5) { top: 70%; left: 50%; width: 8px; height: 8px; animation-delay: 0.8s; } /* top-half 안에서 70% 위치 (전체 화면의 35%) */
+
+
+    </style>
+</head>
+<body>
+
+    <!-- 배경 이미지 (sea.png) -->
+    <div class="background-wrapper"></div>
+
+    <!-- 화면의 위쪽 50% 영역 (하얀색 점 5개 배치) -->
+    <div class="top-half">
+        <div class="star" id="starA" data-name="A"></div>
+        <div class="star" id="starB" data-name="B"></div>
+        <div class="star" id="starC" data-name="C"></div>
+        <div class="star" id="starD" data-name="D"></div>
+        <div class="star" id="starE" data-name="E"></div>
+    </div>
+
+    <!-- 화면의 아래쪽 50% 영역 -->
+    <div class="bottom-half">
+    </div>
+
+
+
+    <!-- 새로 열리는 아이콘 (A 별 우클릭 시 표시됨) -->
+    <div id="newIcon" style="display: none; position: absolute; z-index: 50; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); padding: 15px 25px; border-radius: 12px; color: #fff; font-size: 1.2rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+        🌟 시크릿 메뉴가 열렸습니다 🌟
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const starA = document.getElementById('starA');
+            const newIcon = document.getElementById('newIcon');
+
+            starA.addEventListener('contextmenu', (e) => {
+                e.preventDefault(); // 기본 우클릭 메뉴 방지
+                
+                // 마우스 위치에 새 아이콘 표시
+                newIcon.style.display = 'block';
+                newIcon.style.left = (e.pageX + 15) + 'px';
+                newIcon.style.top = (e.pageY + 15) + 'px';
+            });
+
+            // 빈 공간(다른 곳)을 좌클릭할 때 아이콘 숨기기
+            document.addEventListener('click', (e) => {
+                if (e.target !== starA) {
+                    newIcon.style.display = 'none';
+                }
+            });
+            
+            // 빈 공간(다른 곳)을 우클릭할 때 아이콘 숨기기
+            document.addEventListener('contextmenu', (e) => {
+                if (e.target !== starA) {
+                    newIcon.style.display = 'none';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
