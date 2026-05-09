@@ -18,18 +18,261 @@
             background-color: #000;
         }
 
-        /* 배경 wrapper (sea.png) */
+        /* 씬 공통 스타일 */
+        .scene {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 1s ease;
+            z-index: 1;
+        }
+
+        .scene.active {
+            opacity: 1;
+            pointer-events: all;
+            z-index: 2;
+        }
+
+        /* 배경 wrapper */
         .background-wrapper {
             position: absolute;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background-image: url('data/sea.png');
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             z-index: 1;
+        }
+
+        .bg-sea {
+            background-image: url('data/sea.png');
+        }
+
+        .bg-sugar {
+            background-image: url('data/sugar.png');
+        }
+
+        .bg-darkplanet {
+            background-image: url('data/darkplanet.png');
+        }
+
+        .bg-card {
+            background-image: url('data/card.png');
+        }
+
+        /* 네비게이션 버튼 */
+        .nav-buttons {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            width: 100%;
+            transform: translateY(-50%);
+            z-index: 1000;
+            display: none;
+            justify-content: space-between;
+            padding: 0 40px;
+            box-sizing: border-box;
+            pointer-events: none; /* 빈 공간 클릭 통과 */
+        }
+
+        .nav-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            backdrop-filter: blur(5px);
+            -webkit-backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #fff;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: background 0.3s, transform 0.3s;
+            user-select: none;
+            pointer-events: auto; /* 버튼 부분만 클릭 가능하게 설정 */
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+
+        /* Scene 2~4 특화 요소 */
+        .planetHoverArea {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 300px;
+            height: 300px;
+            border-radius: 50%;
+            z-index: 10;
+            cursor: pointer;
+        }
+
+        .speechBubble {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -200px); /* 행성 위쪽 */
+            background-color: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            border-radius: 20px;
+            padding: 15px 30px;
+            color: #fff;
+            font-size: 1.3rem;
+            font-weight: 600;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            white-space: nowrap;
+            z-index: 11;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* 말풍선 꼬리표 */
+        .speechBubble::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 10px 10px 0;
+            border-style: solid;
+            border-color: rgba(255, 255, 255, 0.4) transparent transparent transparent;
+        }
+
+        .planetHoverArea:hover + .speechBubble,
+        .speechBubble:hover {
+            opacity: 1;
+            transform: translate(-50%, -220px); /* 약간 위로 떠오르는 효과 */
+            pointer-events: auto;
+        }
+
+        /* 말풍선 호버 유지를 위한 가상 요소 */
+        .speechBubble::before {
+            content: '';
+            position: absolute;
+            bottom: -40px;
+            left: 0;
+            width: 100%;
+            height: 40px;
+        }
+
+        /* 링크 복사 아이콘 */
+        .copy-icon {
+            display: inline-block;
+            margin-left: 10px;
+            cursor: pointer;
+            width: 24px;
+            height: 24px;
+            transition: transform 0.2s, opacity 0.2s;
+            opacity: 0.8;
+            color: #fff;
+        }
+
+        .copy-icon:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .copy-icon:active {
+            transform: scale(0.95);
+        }
+
+        /* 토스트 알림 */
+        #toastNotification {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 400;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 2000;
+            letter-spacing: 1px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        #toastNotification.show {
+            opacity: 1;
+            transform: translateX(-50%) translateY(-10px);
+        }
+
+        /* 프로필 카드 (Scene 3 전용) */
+        .profileCard {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) scale(0.9);
+            width: 320px;
+            height: 320px;
+            background-color: rgba(30, 30, 30, 0.75);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 40px;
+            padding: 30px;
+            box-sizing: border-box;
+            color: #fff;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.4s ease, transform 0.4s ease;
+            z-index: 12;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+
+        .planetHoverArea:hover + .profileCard,
+        .profileCard:hover {
+            opacity: 1;
+            transform: translate(-50%, -50%) scale(1);
+            pointer-events: auto;
+        }
+
+        .profile-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+            text-align: center;
+            text-shadow: 0 2px 5px rgba(0,0,0,0.5);
+        }
+
+        .profile-item {
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            width: 100%;
+            padding-left: 10%;
+            box-sizing: border-box;
+            white-space: nowrap;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
         }
 
         /* 2등분 중 위쪽 영역 (별이 위치할 곳) */
@@ -117,142 +360,252 @@
                 opacity: 1;
             }
         }
+    
+        /* 거대해지는 별 클래스 */
+        .all-connected .star.giant-star {
+            animation: none !important;
+            opacity: 1 !important;
+            transform: scale(500) !important;
+            z-index: 9999 !important;
+            transition: transform 2s ease-in-out !important;
+            box-shadow: none !important;
+            cursor: default !important;
+        }
+
+        #instructionText {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #ffffff;
+            font-size: 1.5rem;
+            font-weight: 400;
+            letter-spacing: 1.5px;
+            text-shadow: 0 2px 10px rgba(255,255,255,0.8);
+            z-index: 10;
+            pointer-events: none;
+            animation: pulseText 2s infinite ease-in-out;
+            transition: opacity 0.8s;
+        }
+
+        @keyframes pulseText {
+            0% { opacity: 0.5; }
+            50% { opacity: 1; }
+            100% { opacity: 0.5; }
+        }
+
+    
+        #fadeOverlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-color: #000;
+            opacity: 0;
+            pointer-events: none;
+            z-index: 9999;
+            transition: opacity 2s ease;
+        }
+
+        #fadeOverlay.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
     </style>
 </head>
 
 <body>
 
-    <!-- 배경 이미지 (sea.png) -->
-    <div class="background-wrapper"></div>
+    <!-- 씬 전환용 페이드 오버레이 -->
+    <div id="fadeOverlay"></div>
 
-    <!-- 별들을 잇는 직선을 그릴 SVG 컨테이너 -->
-    <svg id="linesContainer"></svg>
+    <!-- 토스트 알림 -->
+    <div id="toastNotification">복사되었습니다!</div>
 
-    <!-- 화면의 위쪽 50% 영역 (더 구체적이고 촘촘하게 배치된 물고기자리 별 49개) -->
-    <div class="top-half">
-        <!-- 매듭 (알레샤, Alrescha) -->
-        <div class="star" id="starA" data-name="L0"
-            style="top: 90%; left: 50%; width: 8px; height: 8px; animation-delay: 0.1s;"></div>
+    <!-- 네비게이션 버튼 -->
+    <div class="nav-buttons">
+        <div class="nav-btn" id="prevBtn">&lt;</div>
+        <div class="nav-btn" id="nextBtn">&gt;</div>
+    </div>
 
-        <!-- 왼쪽 서쪽 물고기로 가는 끈 (16개) -->
-        <div class="star" data-name="L1"
-            style="top: 87.5%; left: 48.5%; width: 5px; height: 5px; animation-delay: 0.4s;"></div>
-        <div class="star" data-name="L2" style="top: 85%; left: 47%; width: 4px; height: 4px; animation-delay: 1.2s;">
-        </div>
-        <div class="star" data-name="L3" style="top: 82.5%; left: 45%; width: 6px; height: 6px; animation-delay: 0.7s;">
-        </div>
-        <div class="star" data-name="L4" style="top: 80%; left: 43%; width: 4px; height: 4px; animation-delay: 2.1s;">
-        </div>
-        <div class="star" data-name="L5" style="top: 78%; left: 41%; width: 5px; height: 5px; animation-delay: 1.5s;">
-        </div>
-        <div class="star" data-name="L6" style="top: 76%; left: 38%; width: 7px; height: 7px; animation-delay: 0.3s;">
-        </div>
-        <div class="star" data-name="L7" style="top: 74.5%; left: 35%; width: 4px; height: 4px; animation-delay: 2.8s;">
-        </div>
-        <div class="star" data-name="L8" style="top: 73%; left: 32%; width: 5px; height: 5px; animation-delay: 1.1s;">
-        </div>
-        <div class="star" data-name="L9" style="top: 71%; left: 29%; width: 4px; height: 4px; animation-delay: 0.9s;">
-        </div>
-        <div class="star" data-name="L10" style="top: 68%; left: 26%; width: 6px; height: 6px; animation-delay: 2.4s;">
-        </div>
-        <div class="star" data-name="L11"
-            style="top: 64.5%; left: 23%; width: 4px; height: 4px; animation-delay: 0.6s;"></div>
-        <div class="star" data-name="L12" style="top: 60%; left: 21%; width: 5px; height: 5px; animation-delay: 1.8s;">
-        </div>
-        <div class="star" data-name="L13" style="top: 55%; left: 19%; width: 4px; height: 4px; animation-delay: 2.2s;">
-        </div>
-        <div class="star" data-name="L14"
-            style="top: 50%; left: 17.5%; width: 7px; height: 7px; animation-delay: 0.2s;"></div>
-        <div class="star" data-name="L15"
-            style="top: 45%; left: 16.5%; width: 4px; height: 4px; animation-delay: 1.4s;"></div>
-        <div class="star" data-name="L16" style="top: 40%; left: 16%; width: 5px; height: 5px; animation-delay: 0.8s;">
-        </div>
+    <!-- 씬 1: 별자리 연결 -->
+    <div id="scene1" class="scene active">
+        <!-- 배경 이미지 (sea.png) -->
+        <div class="background-wrapper bg-sea"></div>
 
-        <!-- 서쪽 물고기 (서클릿, 12개) -->
-        <div class="star" data-name="W1" style="top: 35%; left: 14%; width: 6px; height: 6px; animation-delay: 1.9s;">
-        </div>
-        <div class="star" data-name="W2" style="top: 30%; left: 11%; width: 4px; height: 4px; animation-delay: 0.5s;">
-        </div>
-        <div class="star" data-name="W3" style="top: 24%; left: 9%; width: 7px; height: 7px; animation-delay: 2.7s;">
-        </div>
-        <div class="star" data-name="W4" style="top: 18%; left: 9%; width: 5px; height: 5px; animation-delay: 0.3s;">
-        </div>
-        <div class="star" data-name="W5" style="top: 13%; left: 12%; width: 4px; height: 4px; animation-delay: 1.2s;">
-        </div>
-        <div class="star" data-name="W6" style="top: 10%; left: 17%; width: 6px; height: 6px; animation-delay: 2.0s;">
-        </div>
-        <div class="star" data-name="W7" style="top: 10%; left: 22%; width: 5px; height: 5px; animation-delay: 0.8s;">
-        </div>
-        <div class="star" data-name="W8" style="top: 13%; left: 27%; width: 4px; height: 4px; animation-delay: 1.6s;">
-        </div>
-        <div class="star" data-name="W9" style="top: 18%; left: 30%; width: 7px; height: 7px; animation-delay: 0.1s;">
-        </div>
-        <div class="star" data-name="W10" style="top: 25%; left: 29%; width: 5px; height: 5px; animation-delay: 2.5s;">
-        </div>
-        <div class="star" data-name="W11" style="top: 31%; left: 26%; width: 4px; height: 4px; animation-delay: 0.9s;">
-        </div>
-        <div class="star" data-name="W12" style="top: 36%; left: 21%; width: 6px; height: 6px; animation-delay: 2.2s;">
-        </div>
+        <!-- 별들을 잇는 직선을 그릴 SVG 컨테이너 -->
+        <svg id="linesContainer"></svg>
 
-        <!-- 오른쪽 북쪽 물고기로 가는 끈 (13개) -->
-        <div class="star" data-name="R1" style="top: 86%; left: 51.5%; width: 5px; height: 5px; animation-delay: 0.6s;">
-        </div>
-        <div class="star" data-name="R2" style="top: 82%; left: 53%; width: 4px; height: 4px; animation-delay: 2.3s;">
-        </div>
-        <div class="star" data-name="R3" style="top: 78%; left: 54.5%; width: 6px; height: 6px; animation-delay: 1.1s;">
-        </div>
-        <div class="star" data-name="R4" style="top: 73.5%; left: 56%; width: 4px; height: 4px; animation-delay: 0.4s;">
-        </div>
-        <div class="star" data-name="R5" style="top: 69%; left: 57.5%; width: 5px; height: 5px; animation-delay: 1.8s;">
-        </div>
-        <div class="star" data-name="R6" style="top: 64%; left: 59%; width: 7px; height: 7px; animation-delay: 0.2s;">
-        </div>
-        <div class="star" data-name="R7" style="top: 59%; left: 61%; width: 4px; height: 4px; animation-delay: 2.6s;">
-        </div>
-        <div class="star" data-name="R8" style="top: 54%; left: 63%; width: 5px; height: 5px; animation-delay: 1.4s;">
-        </div>
-        <div class="star" data-name="R9" style="top: 48.5%; left: 65%; width: 4px; height: 4px; animation-delay: 0.7s;">
-        </div>
-        <div class="star" data-name="R10" style="top: 43%; left: 67%; width: 6px; height: 6px; animation-delay: 2.1s;">
-        </div>
-        <div class="star" data-name="R11" style="top: 37%; left: 69%; width: 5px; height: 5px; animation-delay: 1.0s;">
-        </div>
-        <div class="star" data-name="R12" style="top: 31%; left: 71%; width: 4px; height: 4px; animation-delay: 0.5s;">
-        </div>
-        <div class="star" data-name="R13" style="top: 25%; left: 73%; width: 7px; height: 7px; animation-delay: 2.9s;">
-        </div>
+        <!-- 전체 화면 영역에 14개의 원래 물고기자리 별 배치 (위쪽 50% 영역) -->
+        <div id="starContainer" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 3;">
+            <div class="star" id="starA" data-name="alpha" style="top: 48.7%; left: 22.4%; width: 12px; height: 12px; animation-delay: 0.1s;"></div>
+            <div class="star" data-name="omicron" style="top: 35.7%; left: 28.2%; width: 8px; height: 8px; animation-delay: 0.5s;"></div>
+            <div class="star" data-name="eta" style="top: 26.0%; left: 32.8%; width: 9px; height: 9px; animation-delay: 1.2s;"></div>
+            <div class="star" data-name="phi" style="top: 11.7%; left: 38.6%; width: 10px; height: 10px; animation-delay: 0.8s;"></div>
+            <div class="star" data-name="upsilon" style="top: 5.2%; left: 34.7%; width: 7px; height: 7px; animation-delay: 1.5s;"></div>
+            <div class="star" data-name="tau" style="top: 1.3%; left: 39.9%; width: 9px; height: 9px; animation-delay: 0.3s;"></div>
+            <div class="star" data-name="epsilon" style="top: 38.3%; left: 43.8%; width: 8px; height: 8px; animation-delay: 0.9s;"></div>
+            <div class="star" data-name="delta" style="top: 38.3%; left: 48.4%; width: 7px; height: 7px; animation-delay: 1.1s;"></div>
+            <div class="star" data-name="omega" style="top: 37.0%; left: 62.7%; width: 9px; height: 9px; animation-delay: 0.4s;"></div>
+            <div class="star" data-name="theta" style="top: 33.1%; left: 73.7%; width: 7px; height: 7px; animation-delay: 1.6s;"></div>
+            <div class="star" data-name="gamma" style="top: 39.6%; left: 77.6%; width: 10px; height: 10px; animation-delay: 0.2s;"></div>
+            <div class="star" data-name="kappa" style="top: 46.1%; left: 74.4%; width: 8px; height: 8px; animation-delay: 1.3s;"></div>
+            <div class="star" data-name="lambda" style="top: 46.1%; left: 68.5%; width: 9px; height: 9px; animation-delay: 0.8s;"></div>    </div>
 
-        <!-- 북쪽 물고기 (7개) -->
-        <div class="star" data-name="N1" style="top: 19%; left: 70%; width: 5px; height: 5px; animation-delay: 1.3s;">
-        </div>
-        <div class="star" data-name="N2" style="top: 13%; left: 73%; width: 6px; height: 6px; animation-delay: 0.8s;">
-        </div>
-        <div class="star" data-name="N3" style="top: 10%; left: 78%; width: 4px; height: 4px; animation-delay: 2.4s;">
-        </div>
-        <div class="star" data-name="N4" style="top: 14%; left: 83%; width: 7px; height: 7px; animation-delay: 0.1s;">
-        </div>
-        <div class="star" data-name="N5" style="top: 20%; left: 85%; width: 5px; height: 5px; animation-delay: 1.7s;">
-        </div>
-        <div class="star" data-name="N6" style="top: 26%; left: 82%; width: 4px; height: 4px; animation-delay: 0.9s;">
-        </div>
-        <div class="star" data-name="N7" style="top: 28%; left: 77%; width: 6px; height: 6px; animation-delay: 2.0s;">
+        <!-- 초기 안내 텍스트 -->
+        <div id="instructionText">Connect the stars!</div>
+
+        <!-- 새로 열리는 아이콘 (A 별 우클릭 시 표시됨) -->
+        <div id="newIcon"
+            style="display: none; position: absolute; z-index: 50; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); padding: 15px 25px; border-radius: 12px; color: #fff; font-size: 1.2rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
+            🌟 시크릿 메뉴가 열렸습니다 🌟
         </div>
     </div>
 
-    <!-- 화면의 아래쪽 50% 영역 -->
-    <div class="bottom-half">
+    <!-- 씬 2: sugar.png와 위 러너 -->
+    <div id="scene2" class="scene">
+        <div class="background-wrapper bg-sugar"></div>
+        <div class="planetHoverArea"></div>
+        <div class="speechBubble">
+            weee runner
+            <svg class="copy-icon" onclick="copyLink('file:///C:/Users/s4a2z/OneDrive/Desktop/%EC%97%B0%EC%96%B4%ED%96%84%EC%9D%B4/weeee/weeeee.html')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        </div>
     </div>
 
+    <!-- 씬 3: darkplanet.png와 profile -->
+    <div id="scene3" class="scene">
+        <div class="background-wrapper bg-darkplanet"></div>
+        <div class="planetHoverArea"></div>
+        <div class="profileCard">
+            <div class="profile-title">* profile *</div>
+            <div class="profile-item">name - aw42qz</div>
+            <div class="profile-item">
+                email - aw42qz@gmail.com
+                <svg class="copy-icon" onclick="copyLink('aw42qz@gmail.com')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </div>
+            <div class="profile-item">
+                github
+                <svg class="copy-icon" onclick="copyLink('https://github.com/aw42qz-salmon')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                    <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+                </svg>
+            </div>
+        </div>
+    </div>
 
-
-    <!-- 새로 열리는 아이콘 (A 별 우클릭 시 표시됨) -->
-    <div id="newIcon"
-        style="display: none; position: absolute; z-index: 50; background: rgba(255, 255, 255, 0.2); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.4); padding: 15px 25px; border-radius: 12px; color: #fff; font-size: 1.2rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); pointer-events: none; text-shadow: 0 2px 4px rgba(0,0,0,0.5);">
-        🌟 시크릿 메뉴가 열렸습니다 🌟
+    <!-- 씬 4: card.png와 halligalli -->
+    <div id="scene4" class="scene">
+        <div class="background-wrapper bg-card"></div>
+        <div class="planetHoverArea"></div>
+        <div class="speechBubble">
+            halligalli
+            <svg class="copy-icon" onclick="copyLink('file:///C:/Users/s4a2z/OneDrive/Desktop/%EC%97%B0%EC%96%B4%ED%96%84%EC%9D%B4/2.%20HalliGalli.html')" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
+                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
+            </svg>
+        </div>
     </div>
 
     <script>
+        let toastTimeout;
+        function showToast() {
+            const toast = document.getElementById('toastNotification');
+            toast.classList.add('show');
+            clearTimeout(toastTimeout);
+            toastTimeout = setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        function copyLink(link) {
+            const textArea = document.createElement("textarea");
+            textArea.value = link;
+            textArea.style.position = "fixed";
+            textArea.style.left = "-999999px";
+            textArea.style.top = "-999999px";
+            document.body.appendChild(textArea);
+            textArea.focus();
+            textArea.select();
+
+            try {
+                document.execCommand('copy');
+                showToast();
+            } catch (err) {
+                console.error('Unable to copy', err);
+                alert("복사에 실패했습니다.");
+            }
+
+            document.body.removeChild(textArea);
+        }
+
+        let currentScene = 1;
+        const totalScenes = 4;
+
+        function switchScene(sceneNum) {
+            document.querySelectorAll('.scene').forEach(scene => {
+                scene.classList.remove('active');
+            });
+            const targetScene = document.getElementById('scene' + sceneNum);
+            if (targetScene) {
+                targetScene.classList.add('active');
+            }
+            currentScene = sceneNum;
+            
+            // 네비게이션 버튼 표시 여부 (씬 2 이상에서만 보임)
+            const navButtons = document.querySelector('.nav-buttons');
+            if (sceneNum >= 2) {
+                navButtons.style.display = 'flex';
+            } else {
+                navButtons.style.display = 'none';
+            }
+            
+            // fadeOverlay가 켜져있다면 없앰 (씬 전환 완료)
+            const fadeOverlay = document.getElementById('fadeOverlay');
+            if (fadeOverlay && fadeOverlay.classList.contains('active')) {
+                fadeOverlay.classList.remove('active');
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
+            // 네비게이션 버튼 이벤트 (씬 2, 3, 4 순환)
+            document.getElementById('prevBtn').addEventListener('click', () => {
+                let next = currentScene - 1;
+                if (next < 2) next = 4;
+                switchScene(next);
+            });
+
+            document.getElementById('nextBtn').addEventListener('click', () => {
+                let next = currentScene + 1;
+                if (next > 4) next = 2;
+                switchScene(next);
+            });
+
+            window.resetScene1Effects = function() {
+                document.body.classList.remove('all-connected');
+                if (window.twinkleTimeout) {
+                    clearTimeout(window.twinkleTimeout);
+                    window.twinkleTimeout = null;
+                }
+                const giant = document.querySelector('.giant-star');
+                if (giant) giant.classList.remove('giant-star');
+                
+                const starContainer = document.getElementById('starContainer');
+                const linesContainer = document.getElementById('linesContainer');
+                if (starContainer) {
+                    starContainer.style.transition = '';
+                    starContainer.style.opacity = '1';
+                }
+                if (linesContainer) {
+                    linesContainer.style.transition = '';
+                    linesContainer.style.opacity = '1';
+                }
+            };
+
             const starA = document.getElementById('starA');
             const newIcon = document.getElementById('newIcon');
 
@@ -279,7 +632,9 @@
                 }
             });
 
+
             // --- 별 연결하기 로직 시작 ---
+
             const svgContainer = document.getElementById('linesContainer');
             const stars = document.querySelectorAll('.star');
             let isDrawing = false;
@@ -338,6 +693,7 @@
 
                     // 아직 연결되지 않은 두 별이라면
                     if (!connections.has(connectionId)) {
+
                         connections.add(connectionId);
 
                         const endRect = endStar.getBoundingClientRect();
@@ -402,9 +758,54 @@
 
                 // 모든 노드에 도달했다면 하나의 연결된 그래프가 된 것
                 if (visited.size === nodes.length) {
-                    document.body.classList.add('all-connected');
+                    if (!document.body.classList.contains('all-connected')) {
+                        document.body.classList.add('all-connected');
+                        const instruction = document.getElementById('instructionText');
+                        if (instruction) instruction.style.opacity = '0';
+                        
+                        // 1. 별들이 2초간 반짝임
+                        if (!window.twinkleTimeout) {
+                            window.twinkleTimeout = setTimeout(() => {
+                                // 2. 무작위로 별 하나가 커지며 화면 뒤덮음
+                                const allStars = document.querySelectorAll('.star');
+                                const randomStar = allStars[Math.floor(Math.random() * allStars.length)];
+                                
+                                randomStar.classList.add('giant-star');
+                                
+                                // 커지는 데 2초 소요
+                                setTimeout(() => {
+                                    // 3. 3초 동안 유지
+                                    setTimeout(() => {
+                                        // 점점 별들이 투명해지며
+                                        const starContainer = document.getElementById('starContainer');
+                                        const linesContainer = document.getElementById('linesContainer');
+                                        if (starContainer) {
+                                            starContainer.style.transition = 'opacity 2s ease';
+                                            starContainer.style.opacity = '0';
+                                        }
+                                        if (linesContainer) {
+                                            linesContainer.style.transition = 'opacity 2s ease';
+                                            linesContainer.style.opacity = '0';
+                                        }
+                                        
+                                        // 다음 장면으로 넘어감 (페이드 오버레이 활성화)
+                                        const fadeOverlay = document.getElementById('fadeOverlay');
+                                        if (fadeOverlay) fadeOverlay.classList.add('active');
+                                        
+                                        // 씬2로 전환
+                                        setTimeout(() => {
+                                            switchScene(2);
+                                            // 씬을 전환한 후 씬1의 효과들은 리셋
+                                            if (window.resetScene1Effects) window.resetScene1Effects();
+                                        }, 2000); // 페이드 오버레이가 검어지는데 2초 소요 후
+                                        
+                                    }, 3000);
+                                }, 2000);
+                            }, 2000);
+                        }
+                    }
                 } else {
-                    document.body.classList.remove('all-connected');
+                    if (window.resetScene1Effects) window.resetScene1Effects();
                 }
             }
 
