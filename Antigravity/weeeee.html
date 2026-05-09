@@ -309,125 +309,137 @@
         //      - 'x': 이 구간의 맨 앞 시작점(0)부터 맵의 우측으로 얼마나 떨어져 있는지의 x좌표 거리
         //      - 'y': (젤리/아이템 전용) 바닥은 약 380입니다. 높이 띄우려면 200~300 사이의 값을 주세요.
         // ============================================================================
+        // 젤리 길 생성 헬퍼 함수
+        function jellyLine(startX, startY, count, spacing, subtype = 'yellow') {
+            let arr = [];
+            for (let i = 0; i < count; i++) {
+                arr.push({ type: 'jelly', subtype: subtype, x: startX + i * spacing, y: startY });
+            }
+            return arr;
+        }
+
+        function jellyArc(startX, startY, count, spacing, amplitude, subtype = 'yellow') {
+            let arr = [];
+            for (let i = 0; i < count; i++) {
+                let yOffset = Math.sin((i / (count - 1)) * Math.PI) * amplitude;
+                arr.push({ type: 'jelly', subtype: subtype, x: startX + i * spacing, y: startY - yOffset });
+            }
+            return arr;
+        }
+        
+        function jellyWave(startX, startY, count, spacing, amplitude, frequency, subtype = 'yellow') {
+            let arr = [];
+            for (let i = 0; i < count; i++) {
+                let yOffset = Math.sin(i * frequency) * amplitude;
+                arr.push({ type: 'jelly', subtype: subtype, x: startX + i * spacing, y: startY - yOffset });
+            }
+            return arr;
+        }
+
         const mapSegments = [
             {
                 name: "구간 A (단순 1단 점프와 젤리 비행)",
-                width: 950, // 기존 1200에서 간격을 확 단축
+                width: 950,
                 items: [
                     { type: 1, x: 200 },
-                    { type: 'jelly', x: 400, y: 300 },
-                    { type: 'jelly', x: 450, y: 300 },
-                    { type: 'jelly', x: 500, y: 300 },
+                    ...jellyArc(300, 340, 15, 25, 100, 'blue'),
                     { type: 1, x: 700 }
                 ]
             },
             {
                 name: "구간 B (2단 점프 요구 거대 장애물과 상단 젤리)",
-                width: 1200, // 1500에서 단축
+                width: 1200,
                 items: [
-                    { type: 'dash', x: 100, y: 250 }, // 빠른 통과를 위한 광속질주 배치
+                    { type: 'dash', x: 100, y: 250 },
                     { type: 2, x: 300 },
-                    { type: 'jelly', x: 300, y: 150 },
-                    { type: 2, x: 900 },
-                    { type: 'jelly', x: 900, y: 150 }
+                    ...jellyLine(300, 150, 25, 20, 'pink'),
+                    { type: 2, x: 900 }
                 ]
             },
             {
                 name: "구간 C (연속 장애물 점프와 생명 물약)",
-                width: 1100, // 1400에서 단축
+                width: 1100,
                 items: [
                     { type: 1, x: 200 },
-                    { type: 'jelly', x: 350, y: 250 },
+                    ...jellyArc(200, 340, 12, 20, 100, 'blue'),
                     { type: 1, x: 500 },
-                    { type: 'potion', x: 650, y: 250 }, // 여기 물약 추가!
+                    { type: 'potion', x: 650, y: 250 },
+                    ...jellyArc(500, 340, 12, 20, 100, 'blue'),
                     { type: 1, x: 800 }
                 ]
             },
             {
                 name: "구간 D (신규: 짧은 젤리 무더기)",
-                width: 800, // 매우 짧고 빠른 통과
+                width: 800,
                 items: [
-                    { type: 'jelly', x: 100, y: 340 },
-                    { type: 'jelly', x: 150, y: 340 },
-                    { type: 'jelly', x: 200, y: 340 },
+                    ...jellyLine(100, 340, 15, 18, 'yellow'),
                     { type: 1, x: 400 },
-                    { type: 'jelly', x: 550, y: 250 }
+                    ...jellyLine(450, 250, 15, 18, 'pink')
                 ]
             },
             {
                 name: "구간 E (신규: 1단, 2단 콤보 짬뽕)",
                 width: 1000,
                 items: [
-                    { type: 'giant', x: 50, y: 300 }, // 거대화 아이템 배치
+                    { type: 'giant', x: 50, y: 300 },
                     { type: 1, x: 200 },
-                    { type: 'jelly', x: 350, y: 250 },
+                    ...jellyArc(200, 340, 15, 20, 100, 'blue'),
                     { type: 2, x: 600 },
-                    { type: 'jelly', x: 600, y: 150 },
-                    { type: 'jelly', x: 750, y: 150 }
+                    ...jellyLine(600, 150, 15, 20, 'pink')
                 ]
             },
             {
                 name: "구간 F (신규: 젤리만 있는 보너스 구간)",
-                width: 900,
+                width: 1200,
                 items: [
-                    { type: 'dash', x: 50, y: 300 }, // 시작부터 광속질주!
-                    { type: 'jelly', x: 150, y: 340 },
-                    { type: 'jelly', x: 200, y: 300 },
-                    { type: 'jelly', x: 250, y: 260 },
-                    { type: 'jelly', x: 300, y: 220 },
-                    { type: 'jelly', x: 400, y: 220 },
-                    { type: 'jelly', x: 500, y: 260 },
-                    { type: 'jelly', x: 550, y: 300 },
-                    { type: 'jelly', x: 600, y: 340 }
+                    { type: 'dash', x: 50, y: 300 },
+                    ...jellyWave(150, 280, 45, 22, 60, 0.2, 'yellow')
                 ]
             },
             {
                 name: "구간 G (신규: 공포의 장애물 3연속)",
                 width: 1200,
                 items: [
-                    { type: 'giant', x: 50, y: 300 }, // 방해물을 모두 격파할 거대화 아이템!
+                    { type: 'giant', x: 50, y: 300 },
                     { type: 1, x: 200 },
                     { type: 1, x: 500 },
                     { type: 1, x: 800 },
-                    { type: 'jelly', x: 1000, y: 300 }
+                    ...jellyLine(900, 340, 15, 20, 'pink')
                 ]
             },
             {
                 name: "구간 H (신규: 2단 점프 후 젤리 라인 탑승)",
                 width: 1100,
                 items: [
-                    { type: 'dash', x: 50, y: 250 }, // 여기도 광속질주 하나 추가!
+                    { type: 'dash', x: 50, y: 250 },
                     { type: 2, x: 200 },
-                    { type: 'jelly', x: 200, y: 150 },
-                    { type: 'jelly', x: 350, y: 150 },
-                    { type: 'jelly', x: 500, y: 150 },
-                    { type: 'jelly', x: 650, y: 150 },
-                    { type: 1, x: 900 }
+                    ...jellyLine(200, 150, 35, 20, 'blue'),
+                    { type: 1, x: 950 }
                 ]
             },
             {
                 name: "구간 I (신규: 천장 장애물 슬라이드로 피하기)",
                 width: 1200,
                 items: [
-                    { type: 3, x: 300 }, // 슬라이드 전용 장애물
-                    { type: 'jelly', x: 500, y: 340 }, // 납작한 상태로 먹기 좋게 낮음
-                    { type: 'jelly', x: 550, y: 340 },
-                    { type: 3, x: 800 }
+                    { type: 3, x: 300 },
+                    ...jellyLine(300, 340, 20, 18, 'yellow'),
+                    { type: 3, x: 800 },
+                    ...jellyLine(800, 340, 20, 18, 'pink')
                 ]
             },
             {
                 name: "구간 J (신규: 거대화 & 광속질주 무적 콤보 파괴 지대!)",
                 width: 1500,
                 items: [
-                    { type: 'giant', x: 100, y: 340 }, // 우선 거대화 장착 (낮게)
-                    { type: 'dash', x: 150, y: 340 },  // 직후 바로 질주 돌입! (낮게)
-                    // 시원하게 때려 부술 장애물 릴레이
+                    { type: 'giant', x: 100, y: 340 },
+                    { type: 'dash', x: 150, y: 340 },
                     { type: 2, x: 400 }, 
                     { type: 2, x: 600 },
                     { type: 1, x: 750 },
                     { type: 1, x: 800 },
-                    { type: 3, x: 1050 }, // 거대한 머리로 부숴버릴 천장 장애물
-                    { type: 2, x: 1300 }
+                    { type: 3, x: 1050 },
+                    { type: 2, x: 1300 },
+                    ...jellyLine(200, 340, 60, 20, 'yellow')
                 ]
             },
             {
@@ -435,11 +447,11 @@
                 width: 1500,
                 items: [
                     { type: 3, x: 200 },
-                    { type: 'jelly', x: 400, y: 340 },
+                    ...jellyLine(200, 340, 15, 20, 'blue'),
                     { type: 3, x: 600 },
-                    { type: 'jelly', x: 800, y: 340 },
+                    ...jellyLine(600, 340, 15, 20, 'pink'),
                     { type: 3, x: 1000 },
-                    { type: 'jelly', x: 1200, y: 340 }
+                    ...jellyLine(1000, 340, 15, 20, 'yellow')
                 ]
             },
             {
@@ -447,11 +459,11 @@
                 width: 1400,
                 items: [
                     { type: 2, x: 300 },
-                    { type: 'jelly', x: 300, y: 150 },
+                    ...jellyArc(250, 340, 15, 20, 200, 'pink'),
                     { type: 2, x: 700 },
-                    { type: 'jelly', x: 700, y: 150 },
+                    ...jellyArc(650, 340, 15, 20, 200, 'blue'),
                     { type: 2, x: 1100 },
-                    { type: 'jelly', x: 1100, y: 150 }
+                    ...jellyArc(1050, 340, 15, 20, 200, 'yellow')
                 ]
             },
             {
@@ -459,12 +471,7 @@
                 width: 1600,
                 items: [
                     { type: 'dash', x: 100, y: 300 },
-                    { type: 'jelly', x: 300, y: 300 },
-                    { type: 'jelly', x: 500, y: 200 },
-                    { type: 'jelly', x: 700, y: 150 },
-                    { type: 'jelly', x: 900, y: 200 },
-                    { type: 'jelly', x: 1100, y: 300 },
-                    { type: 'jelly', x: 1300, y: 340 }
+                    ...jellyWave(200, 260, 65, 20, 80, 0.2, 'blue')
                 ]
             },
             {
@@ -472,7 +479,9 @@
                 width: 1200,
                 items: [
                     { type: 1, x: 300 },
+                    ...jellyArc(300, 340, 12, 20, 100, 'yellow'),
                     { type: 'potion', x: 550, y: 250 },
+                    ...jellyArc(550, 340, 12, 20, 100, 'pink'),
                     { type: 1, x: 800 }
                 ]
             },
@@ -481,8 +490,11 @@
                 width: 1300,
                 items: [
                     { type: 1, x: 200 },
+                    ...jellyArc(200, 340, 10, 20, 100, 'blue'),
                     { type: 1, x: 500 },
+                    ...jellyArc(500, 340, 10, 20, 100, 'pink'),
                     { type: 1, x: 800 },
+                    ...jellyArc(800, 340, 10, 20, 100, 'yellow'),
                     { type: 1, x: 1100 }
                 ]
             },
@@ -496,7 +508,8 @@
                     { type: 1, x: 800 },
                     { type: 3, x: 1000 },
                     { type: 2, x: 1200 },
-                    { type: 1, x: 1400 }
+                    { type: 1, x: 1400 },
+                    ...jellyLine(200, 280, 60, 20, 'pink')
                 ]
             },
             {
@@ -504,9 +517,9 @@
                 width: 1300,
                 items: [
                     { type: 2, x: 300 },
-                    { type: 'jelly', x: 300, y: 150 },
+                    ...jellyArc(250, 340, 15, 20, 200, 'blue'),
                     { type: 3, x: 600 },
-                    { type: 'jelly', x: 700, y: 340 },
+                    ...jellyLine(600, 340, 15, 20, 'yellow'),
                     { type: 2, x: 1000 },
                     { type: 3, x: 1200 }
                 ]
@@ -516,9 +529,7 @@
                 width: 1200,
                 items: [
                     { type: 2, x: 200 },
-                    { type: 'jelly', x: 400, y: 150 },
-                    { type: 'jelly', x: 600, y: 150 },
-                    { type: 'jelly', x: 800, y: 150 },
+                    ...jellyLine(300, 150, 30, 20, 'pink'),
                     { type: 2, x: 1000 }
                 ]
             },
@@ -527,7 +538,8 @@
                 width: 1400,
                 items: [
                     { type: 2, x: 300 },
-                    { type: 'potion', x: 650, y: 150 }, // 2단 점프 피크 지점에 물약 배치
+                    ...jellyArc(300, 340, 15, 22, 200, 'blue'),
+                    { type: 'potion', x: 650, y: 150 },
                     { type: 2, x: 1000 }
                 ]
             },
@@ -537,13 +549,12 @@
                 items: [
                     { type: 'dash', x: 100, y: 340 },
                     { type: 'giant', x: 150, y: 340 },
+                    ...jellyWave(200, 280, 80, 20, 80, 0.2, 'yellow'),
                     { type: 1, x: 400 },
                     { type: 2, x: 600 },
                     { type: 3, x: 900 },
                     { type: 'potion', x: 1200, y: 340 },
                     { type: 2, x: 1500 },
-                    { type: 'jelly', x: 1600, y: 150 },
-                    { type: 'jelly', x: 1700, y: 150 },
                     { type: 3, x: 1900 },
                     { type: 1, x: 2100 }
                 ]
@@ -863,10 +874,11 @@
         }
 
         class Jelly {
-            constructor(absoluteX, targetY) {
-                this.x = absoluteX - distance; // 스폰 시 실제 캔버스 상 X 좌표 환산
+            constructor(absoluteX, targetY, subtype = 'yellow') {
+                this.x = absoluteX - distance;
                 this.y = targetY;
-                this.radius = 12; // 젤리 크기
+                this.subtype = subtype;
+                this.radius = subtype === 'pink' ? 14 : (subtype === 'blue' ? 10 : 12);
             }
 
             update(deltaTime) {
@@ -875,22 +887,50 @@
 
             draw() {
                 ctx.save();
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                if (this.subtype === 'blue') {
+                    // 파란 젤리 (강낭콩 모양)
+                    ctx.fillStyle = '#3498db';
+                    ctx.beginPath();
+                    ctx.ellipse(this.x, this.y, 14, 8, Math.PI / 8, 0, Math.PI * 2);
+                    ctx.fill();
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                } else if (this.subtype === 'pink') {
+                    // 핑크 곰젤리
+                    ctx.fillStyle = '#ff9ff3';
+                    // 얼굴
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, 12, 0, Math.PI * 2);
+                    ctx.fill();
+                    // 귀
+                    ctx.beginPath(); ctx.arc(this.x - 8, this.y - 10, 5, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x + 8, this.y - 10, 5, 0, Math.PI * 2); ctx.fill();
+                    
+                    // 디테일
+                    ctx.fillStyle = '#fff'; // 눈
+                    ctx.beginPath(); ctx.arc(this.x - 4, this.y - 2, 2, 0, Math.PI * 2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(this.x + 4, this.y - 2, 2, 0, Math.PI * 2); ctx.fill();
 
-                // 밝은 황금빛 (동그라미 반짝)
-                const gradient = ctx.createRadialGradient(this.x - 3, this.y - 3, 2, this.x, this.y, this.radius);
-                gradient.addColorStop(0, '#fff200');
-                gradient.addColorStop(1, '#ffc000');
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 1.5;
+                    ctx.stroke();
+                } else {
+                    // 기본 노란 젤리
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
 
-                ctx.fillStyle = gradient;
-                ctx.fill();
+                    const gradient = ctx.createRadialGradient(this.x - 3, this.y - 3, 2, this.x, this.y, this.radius);
+                    gradient.addColorStop(0, '#fff200');
+                    gradient.addColorStop(1, '#ffc000');
 
-                // 하얀 외곽선으로 눈에 띄게
-                ctx.strokeStyle = '#fff';
-                ctx.lineWidth = 2;
-                ctx.stroke();
+                    ctx.fillStyle = gradient;
+                    ctx.fill();
 
+                    ctx.strokeStyle = '#fff';
+                    ctx.lineWidth = 2;
+                    ctx.stroke();
+                }
                 ctx.restore();
             }
 
@@ -1113,7 +1153,7 @@
                     let absoluteX = nextSegmentSpawnDistance + item.x;
 
                     if (item.type === 'jelly') {
-                        jellies.push(new Jelly(absoluteX, item.y));
+                        jellies.push(new Jelly(absoluteX, item.y, item.subtype));
                     } else if (item.type === 'potion') {
                         potions.push(new Potion(absoluteX, item.y));
                     } else if (item.type === 'dash') {
